@@ -17,6 +17,7 @@ except ImportError:
 def _get_bench_types(url):
     response = requests.get('{}/v1/bench/types'.format(url))
     if response.status_code != 200:
+        print('{}/v1/bench/types'.format(url))
         print("Failed to fetch benchmark types")
         return
     return response.json()
@@ -171,9 +172,13 @@ if __name__ == '__main__':
 
     host = os.getenv('ATOMIX_HOST', 'localhost')
     port = int(os.getenv('ATOMIX_PORT', '5678'))
+    path = os.getenv('ATOMIX_PATH', '/')
+    url = os.getenv('ATOMIX_URL')
 
     address = "{}:{}".format(host, port)
-    url = "http://{}".format(address)
+
+    if url is None:
+        url = "http://{}{}".format(address, path)
 
     print("Connecting to {}".format(url))
     types = _get_bench_types(url)
