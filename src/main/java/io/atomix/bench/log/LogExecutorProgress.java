@@ -32,17 +32,18 @@ public class LogExecutorProgress extends ExecutorProgress {
 
   @JsonCreator
   public LogExecutorProgress(
+      @JsonProperty("member") String memberId,
       @JsonProperty("state") BenchmarkStatus state,
       @JsonProperty("operations") int operations,
       @JsonProperty("time") BigDecimal time) {
-    super(state);
+    super(memberId, state);
     this.operations = operations;
     this.time = time;
   }
 
   @Override
   public ExecutorResult asResult() {
-    return new LogExecutorResult(operations, time);
+    return new LogExecutorResult(getMemberId(), operations, time);
   }
 
   public int getOperations() {

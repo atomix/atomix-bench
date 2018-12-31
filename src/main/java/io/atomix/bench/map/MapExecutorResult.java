@@ -35,11 +35,13 @@ public class MapExecutorResult extends ExecutorResult {
 
   @JsonCreator
   public MapExecutorResult(
+      @JsonProperty("member") String memberId,
       @JsonProperty("operations") int operations,
       @JsonProperty("reads") int reads,
       @JsonProperty("writes") int writes,
       @JsonProperty("events") int events,
       @JsonProperty("time") BigDecimal time) {
+    super(memberId);
     this.operations = operations;
     this.reads = reads;
     this.writes = writes;
@@ -49,7 +51,7 @@ public class MapExecutorResult extends ExecutorResult {
 
   @Override
   public ExecutorProgress asProgress() {
-    return new MapExecutorProgress(BenchmarkStatus.COMPLETE, operations, reads, writes, events, time);
+    return new MapExecutorProgress(getMemberId(), BenchmarkStatus.COMPLETE, operations, reads, writes, events, time);
   }
 
   public int getOperations() {

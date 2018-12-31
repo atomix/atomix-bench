@@ -58,6 +58,7 @@ public class LogBenchmarkExecutor extends BenchmarkExecutor<LogBenchmarkConfig> 
   @Override
   public ExecutorProgress getProgress() {
     return new LogExecutorProgress(
+        getMemberId().id(),
         running ? BenchmarkStatus.RUNNING : BenchmarkStatus.COMPLETE,
         opCounter.get(),
         new BigDecimal((endTime > 0 ? endTime : System.currentTimeMillis()) - startTime)

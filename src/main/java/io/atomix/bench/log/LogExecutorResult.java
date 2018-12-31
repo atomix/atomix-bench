@@ -32,15 +32,17 @@ public class LogExecutorResult extends ExecutorResult {
 
   @JsonCreator
   public LogExecutorResult(
+      @JsonProperty("member") String memberId,
       @JsonProperty("operations") int operations,
       @JsonProperty("time") BigDecimal time) {
+    super(memberId);
     this.operations = operations;
     this.time = time;
   }
 
   @Override
   public ExecutorProgress asProgress() {
-    return new LogExecutorProgress(BenchmarkStatus.COMPLETE, operations, time);
+    return new LogExecutorProgress(getMemberId(), BenchmarkStatus.COMPLETE, operations, time);
   }
 
   public int getOperations() {

@@ -35,13 +35,14 @@ public class MessagingExecutorProgress extends ExecutorProgress {
 
   @JsonCreator
   public MessagingExecutorProgress(
+      @JsonProperty("member") String memberId,
       @JsonProperty("state") BenchmarkStatus state,
       @JsonProperty("requests") int requests,
       @JsonProperty("responses") int responses,
       @JsonProperty("failures") int failures,
       @JsonProperty("time") BigDecimal time,
       @JsonProperty("latency") BigDecimal[] latency) {
-    super(state);
+    super(memberId, state);
     this.requests = requests;
     this.responses = responses;
     this.failures = failures;
@@ -51,7 +52,7 @@ public class MessagingExecutorProgress extends ExecutorProgress {
 
   @Override
   public ExecutorResult asResult() {
-    return new MessagingExecutorResult(requests, responses, failures, time, latency);
+    return new MessagingExecutorResult(getMemberId(), requests, responses, failures, time, latency);
   }
 
   public int getRequests() {

@@ -88,9 +88,10 @@ public abstract class BenchmarkController<C extends BenchmarkConfig> {
   /**
    * Returns a default progress report for the controller.
    *
+   * @param memberId the member identifier
    * @return a default progress report for the controller
    */
-  protected abstract ExecutorProgress getDefaultProgress();
+  protected abstract ExecutorProgress getDefaultProgress(MemberId memberId);
 
   /**
    * Starts the benchmark.
@@ -103,7 +104,7 @@ public abstract class BenchmarkController<C extends BenchmarkConfig> {
     LOGGER.info("Starting benchmark {}", getBenchId());
 
     atomix.getCommunicationService().subscribe(
-        config.getBenchId(),
+        BenchmarkSubjects.report(getBenchId()),
         BenchmarkSerializer.INSTANCE::decode,
         this::report,
         atomix.getExecutorService());
@@ -113,7 +114,7 @@ public abstract class BenchmarkController<C extends BenchmarkConfig> {
         .map(Member::id)
         .collect(Collectors.toList());
 
-    benchMembers.forEach(member -> reports.put(member.id(), getDefaultProgress()));
+    benchMembers.forEach(member -> reports.put(member.id(), getDefaultProgress(member)));
 
     int operationsPerMember = config.getOperations() / benchMembers.size();
     List<CompletableFuture<Void>> runFutures = benchMembers.stream()
@@ -135,7 +136,7 @@ public abstract class BenchmarkController<C extends BenchmarkConfig> {
   public CompletableFuture<Void> stop() {
     LOGGER.info("Stopping benchmark {}", config.getBenchId());
 
-    atomix.getCommunicationService().unsubscribe(config.getBenchId());
+    atomix.getCommunicationService().unsubscribe(BenchmarkSubjects.report(getBenchId()));
     if (reports.isEmpty()) {
       return CompletableFuture.completedFuture(null);
     }
@@ -154,11 +155,11 @@ public abstract class BenchmarkController<C extends BenchmarkConfig> {
   /**
    * Reports the benchmark progress for a runner.
    *
-   * @param memberId the reporting member
    * @param progress the progress for a runner
    */
-  private void report(MemberId memberId, ExecutorProgress progress) {
-    reports.put(memberId.id(), progress);
+  private void report(ExecutorProgress progress) {
+    LOGGER.info("Received benchmark report from {}", progress.getMemberId());
+    reports.put(progress.getMemberId(), progress);
 
     if (progress.getStatus() == BenchmarkStatus.COMPLETE) {
       boolean complete = reports.values().stream().allMatch(p -> p.getStatus() == BenchmarkStatus.COMPLETE);

@@ -19,6 +19,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import io.atomix.cluster.MemberId;
 import io.atomix.core.Atomix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,15 @@ public abstract class BenchmarkExecutor<C extends BenchmarkConfig> {
 
   protected BenchmarkExecutor(Atomix atomix) {
     this.atomix = atomix;
+  }
+
+  /**
+   * Returns the benchmark member identifier.
+   *
+   * @return the benchmark member identifier
+   */
+  public MemberId getMemberId() {
+    return atomix.getMembershipService().getLocalMember().id();
   }
 
   /**
@@ -72,7 +82,7 @@ public abstract class BenchmarkExecutor<C extends BenchmarkConfig> {
    * Sends a progress report to the benchmark controller.
    */
   private void report() {
-    atomix.getCommunicationService().broadcastIncludeSelf(getBenchId(), getProgress(), BenchmarkSerializer.INSTANCE::encode, false);
+    atomix.getCommunicationService().broadcastIncludeSelf(BenchmarkSubjects.report(getBenchId()), getProgress(), BenchmarkSerializer.INSTANCE::encode);
   }
 
   /**

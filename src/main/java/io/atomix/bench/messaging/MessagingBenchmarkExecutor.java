@@ -76,6 +76,7 @@ public class MessagingBenchmarkExecutor extends BenchmarkExecutor<MessagingBench
         new BigDecimal(statistics.getN() == 0 ? 0 : statistics.getPercentile(.95) / NANOSECONDS_PER_SECOND).setScale(10, RoundingMode.HALF_UP)
     };
     return new MessagingExecutorProgress(
+        getMemberId().id(),
         running ? BenchmarkStatus.RUNNING : BenchmarkStatus.COMPLETE,
         requestCounter.get(),
         responseCounter.get(),

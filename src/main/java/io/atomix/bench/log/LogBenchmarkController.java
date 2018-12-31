@@ -23,6 +23,7 @@ import java.util.stream.IntStream;
 import io.atomix.bench.BenchmarkController;
 import io.atomix.bench.BenchmarkStatus;
 import io.atomix.bench.ExecutorProgress;
+import io.atomix.cluster.MemberId;
 import io.atomix.core.Atomix;
 import io.atomix.primitive.Recovery;
 import io.atomix.protocols.log.DistributedLogProtocol;
@@ -41,8 +42,8 @@ public class LogBenchmarkController extends BenchmarkController<LogBenchmarkConf
   }
 
   @Override
-  protected ExecutorProgress getDefaultProgress() {
-    return new LogExecutorProgress(BenchmarkStatus.RUNNING, 0, BigDecimal.ZERO);
+  protected ExecutorProgress getDefaultProgress(MemberId memberId) {
+    return new LogExecutorProgress(memberId.id(), BenchmarkStatus.RUNNING, 0, BigDecimal.ZERO);
   }
 
   @Override

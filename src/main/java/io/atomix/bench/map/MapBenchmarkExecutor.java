@@ -65,6 +65,7 @@ public class MapBenchmarkExecutor extends BenchmarkExecutor<MapBenchmarkConfig> 
   @Override
   public ExecutorProgress getProgress() {
     return new MapExecutorProgress(
+        getMemberId().id(),
         running ? BenchmarkStatus.RUNNING : BenchmarkStatus.COMPLETE,
         opCounter.get(),
         readCounter.get(),

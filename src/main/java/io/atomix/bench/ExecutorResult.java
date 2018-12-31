@@ -19,5 +19,20 @@ package io.atomix.bench;
  * Benchmark runner progress report.
  */
 public abstract class ExecutorResult {
+  private final String memberId;
+
+  public ExecutorResult(String memberId) {
+    this.memberId = memberId;
+  }
+
+  /**
+   * Returns the executor member ID.
+   *
+   * @return the executor member ID
+   */
+  public String getMemberId() {
+    return memberId;
+  }
+
   public abstract ExecutorProgress asProgress();
 }
